@@ -46,6 +46,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
   }
 
+  Future<void> _handleDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: const Text(
+          'This permanently deletes your business profile, services, verification documents, and account. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.deleteAccount();
+    if (!context.mounted) return;
+
+    if (success) {
+      Provider.of<VendorProvider>(context, listen: false).clearVendor();
+      Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+    } else {
+      Helpers.showErrorToast(authProvider.error ?? 'Unable to delete account.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -121,13 +157,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _buildMenuItem(
                           icon: Icons.description_outlined,
                           title: 'Terms & Conditions',
-                          onTap: () {},
+                          onTap: () =>
+                              Navigator.pushNamed(context, AppRoutes.terms),
                         ),
                         _buildMenuItem(
                           icon: Icons.privacy_tip_outlined,
                           title: 'Privacy Policy',
-                          onTap: () {},
-                          showDivider: false,
+                          onTap: () =>
+                              Navigator.pushNamed(context, AppRoutes.privacy),
                         ),
                       ]),
 
@@ -138,8 +175,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: Icons.logout,
                           title: 'Logout',
                           textColor: AppColors.error,
-                          showDivider: false,
                           onTap: () => _handleLogout(context),
+                        ),
+                        _buildMenuItem(
+                          icon: Icons.delete_outline,
+                          title: 'Delete Account',
+                          textColor: AppColors.error,
+                          showDivider: false,
+                          onTap: () => _handleDeleteAccount(context),
                         ),
                       ]),
 

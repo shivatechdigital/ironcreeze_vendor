@@ -11,6 +11,7 @@ import '../views/home/main_navigation_screen.dart';
 import '../views/orders/order_details_screen.dart';
 import '../views/profile/edit_profile_screen.dart';
 import '../views/profile/my_services_screen.dart';
+import '../views/profile/legal_document_screen.dart';
 import '../views/notifications/notifications_screen.dart';
 import '../data/models/order_model.dart';
 import '../views/earnings/earnings_screen.dart';
@@ -35,6 +36,8 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String earnings = '/earnings';
   static const String withdrawalHistory = '/withdrawal-history';
+  static const String terms = '/terms';
+  static const String privacy = '/privacy';
 
   // Route Generator
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -99,6 +102,18 @@ class AppRoutes {
 
       case withdrawalHistory:
         return _buildRoute(const WithdrawalHistoryScreen(), settings);
+
+      case terms:
+        return _buildRoute(
+          const LegalDocumentScreen(document: LegalDocument.terms),
+          settings,
+        );
+
+      case privacy:
+        return _buildRoute(
+          const LegalDocumentScreen(document: LegalDocument.privacy),
+          settings,
+        );
 
       default:
         return _buildRoute(

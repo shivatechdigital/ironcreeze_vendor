@@ -167,41 +167,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     }
   }
 
-  Future<void> _completeDelivery() async {
+  Future<void> _verifyDropCodeAndComplete() async {
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+
     final dropCode = await _showCodeInputDialog(
       'Enter Drop Code',
       'Ask customer for their 4-digit delivery code',
     );
     if (dropCode == null || !mounted) return;
-
-    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
-
-    if (!_order.isPaymentReceived) {
-      final paymentReceived = await ConfirmationDialog.show(
-        context: context,
-        title: 'Confirm Payment',
-        message: 'Has the payment been received from the customer?',
-        confirmText: 'Payment Received',
-        cancelText: 'Cancel',
-        icon: Icons.payments_outlined,
-      );
-      if (paymentReceived != true || !mounted) return;
-
-      setState(() => _isLoading = true);
-      final paymentUpdated = await orderProvider.markPaymentReceived(
-        _order.orderId,
-        true,
-      );
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-
-      if (!paymentUpdated) {
-        Helpers.showErrorToast(
-          orderProvider.error ?? 'Failed to confirm payment',
-        );
-        return;
-      }
-    }
 
     setState(() => _isLoading = true);
     final completed = await orderProvider.markAsCompleted(
@@ -216,6 +189,36 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     } else {
       Helpers.showErrorToast(orderProvider.error ?? 'Invalid drop code!');
     }
+  }
+
+  Future<void> _collectCashAndComplete() async {
+    final cashCollected = await ConfirmationDialog.show(
+      context: context,
+      title: 'Collect Cash',
+      message: 'Please collect the cash from the customer before completing delivery.',
+      confirmText: 'Collected Cash',
+      cancelText: 'Cancel',
+      icon: Icons.payments_outlined,
+    );
+    if (cashCollected != true || !mounted) return;
+
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+    setState(() => _isLoading = true);
+    final paymentUpdated = await orderProvider.markPaymentReceived(
+      _order.orderId,
+      true,
+    );
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (!paymentUpdated) {
+      Helpers.showErrorToast(
+        orderProvider.error ?? 'Failed to confirm cash collection',
+      );
+      return;
+    }
+
+    await _verifyDropCodeAndComplete();
   }
 
   Future<String?> _showCodeInputDialog(String title, String subtitle) async {
@@ -901,7 +904,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         break;
 
       case OrderStatus.delivery:
-        buttonText = 'Verify Drop Code & Complete';
+        if (_order.paymentMethod == null) {
+          return null;
+        }
+        buttonText = _order.paymentMethod == PaymentMethod.cod &&
+                !_order.isPaymentReceived
+            ? 'Collect COD'
+            : 'Verify Drop Code & Complete';
         break;
       case OrderStatus.completed:
         return null;
@@ -927,7 +936,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           text: buttonText,
           onPressed: () {
             if (_order.status == OrderStatus.delivery) {
-              _completeDelivery();
+              if (_order.paymentMethod == PaymentMethod.cod &&
+                  !_order.isPaymentReceived) {
+                _collectCashAndComplete();
+              } else {
+                _verifyDropCodeAndComplete();
+              }
             } else {
               _handleStatusUpdate(nextStatus!);
             }

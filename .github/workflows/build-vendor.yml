@@ -32,6 +32,8 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Clean build files
+        run: flutter clean
       - name: Install dependencies
         run: flutter pub get
       - name: Build APK
@@ -54,6 +56,8 @@ jobs:
         with:
           channel: stable
           cache: true
+      - name: Clean build files
+        run: flutter clean
       - name: Install dependencies
         run: flutter pub get
       - name: Build unsigned iOS app

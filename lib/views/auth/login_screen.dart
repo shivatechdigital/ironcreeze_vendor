@@ -31,6 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isGoogleLoading = false;
   bool _isPhoneLoading = false;
 
+  bool get _showGoogleSignIn =>
+      kIsWeb || defaultTargetPlatform != TargetPlatform.iOS;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -488,36 +491,36 @@ class _LoginScreenState extends State<LoginScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Google
-        GestureDetector(
-          onTap: _isGoogleLoading ? null : _handleGoogleLogin,
-          child: Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE8E8E8), width: 1.5),
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white,
-            ),
-            child: _isGoogleLoading
-                ? const Padding(
-                    padding: EdgeInsets.all(14),
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF4285F4),
+        if (_showGoogleSignIn) ...[
+          GestureDetector(
+            onTap: _isGoogleLoading ? null : _handleGoogleLogin,
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFE8E8E8), width: 1.5),
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+              ),
+              child: _isGoogleLoading
+                  ? const Padding(
+                      padding: EdgeInsets.all(14),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF4285F4),
+                        ),
                       ),
+                    )
+                  : const Icon(
+                      Icons.g_translate,
+                      color: Color(0xFF4285F4),
+                      size: 24,
                     ),
-                  )
-                : const Icon(
-                    Icons.g_translate,
-                    color: Color(0xFF4285F4),
-                    size: 24,
-                  ),
+            ),
           ),
-        ),
-
-        const SizedBox(width: 16),
+          const SizedBox(width: 16),
+        ],
 
         // Toggle Phone / Email
         GestureDetector(

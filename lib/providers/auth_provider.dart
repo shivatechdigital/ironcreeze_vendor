@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ironcreze_vendor/services/fcm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -404,6 +405,34 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('❌ signOut error: $e');
       _error = 'Failed to sign out';
       notifyListeners();
+    }
+  }
+
+  Future<bool> deleteAccount() async {
+    try {
+      _status = AuthStatus.loading;
+      _error = null;
+      notifyListeners();
+
+      await FirebaseFunctions.instance
+          .httpsCallable('deleteAccount')
+          .call({'accountType': 'vendor'});
+      _user = null;
+      _authType = null;
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+      return true;
+    } on FirebaseFunctionsException catch (error) {
+      _error = error.message ?? 'Unable to delete account.';
+      _status = AuthStatus.error;
+      notifyListeners();
+      return false;
+    } catch (error) {
+      debugPrint('Delete account error: $error');
+      _error = 'Unable to delete account. Please try again later.';
+      _status = AuthStatus.error;
+      notifyListeners();
+      return false;
     }
   }
 

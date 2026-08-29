@@ -1,7 +1,61 @@
 // functions/index.js
 const { onDocumentCreated } = require("firebase-functions/v2/firestore"); // ✅ Sirf yeh chahiye
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 admin.initializeApp();
+
+async function deleteStorageFolder(prefix) {
+    const [files] = await admin.storage().bucket().getFiles({ prefix });
+    await Promise.all(files.map((file) => file.delete()));
+}
+
+exports.deleteAccount = onCall(async (request) => {
+    if (!request.auth) {
+        throw new HttpsError("unauthenticated", "You must be signed in to delete an account.");
+    }
+
+    const accountType = request.data?.accountType;
+    if (accountType !== "customer" && accountType !== "vendor") {
+        throw new HttpsError("invalid-argument", "Invalid account type.");
+    }
+
+    const userId = request.auth.uid;
+    const db = admin.firestore();
+    const profileCollection = accountType === "customer" ? "customers" : "vendors";
+    const profileRef = db.collection(profileCollection).doc(userId);
+
+    try {
+        const batch = db.batch();
+        batch.delete(profileRef);
+
+        const notifications = await db
+            .collection("notifications")
+            .where(accountType === "customer" ? "customerId" : "vendorId", "==", userId)
+            .get();
+        notifications.docs.forEach((document) => batch.delete(document.ref));
+
+        const services = await profileRef.collection("services").get();
+        services.docs.forEach((document) => batch.delete(document.ref));
+
+        const withdrawals = await profileRef.collection("withdrawals").get();
+        withdrawals.docs.forEach((document) => batch.delete(document.ref));
+
+        await batch.commit();
+
+        if (accountType === "customer") {
+            await admin.storage().bucket().file(`profile_pics/${userId}.jpg`).delete({ ignoreNotFound: true });
+        } else {
+            await deleteStorageFolder(`vendors/profiles/${userId}/`);
+            await deleteStorageFolder(`vendors/documents/${userId}/`);
+        }
+
+        await admin.auth().deleteUser(userId);
+        return { deleted: true };
+    } catch (error) {
+        console.error("Account deletion failed", error);
+        throw new HttpsError("internal", "Unable to delete the account. Please try again later.");
+    }
+});
 
 // ═══════════════════════════════════════════════════════════════
 // 1. Vendor ko notify karo — naya order aaya

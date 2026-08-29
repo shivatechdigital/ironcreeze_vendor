@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
@@ -29,6 +30,9 @@ class _NewLoginPageState extends State<NewLoginPage> {
   bool _isLoading = false;
   bool _isGoogleLoading = false;
   bool _isPhoneLoading = false;
+
+  bool get _showGoogleSignIn =>
+      kIsWeb || defaultTargetPlatform != TargetPlatform.iOS;
 
   @override
   void dispose() {
@@ -501,37 +505,37 @@ class _NewLoginPageState extends State<NewLoginPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        /// Google Icon
-        GestureDetector(
-          onTap: _isGoogleLoading ? null : _handleGoogleLogin,
-          child: Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE8E8E8), width: 1.5),
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white,
-            ),
-            child: _isGoogleLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF4285F4),
+        if (_showGoogleSignIn) ...[
+          GestureDetector(
+            onTap: _isGoogleLoading ? null : _handleGoogleLogin,
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFFE8E8E8), width: 1.5),
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+              ),
+              child: _isGoogleLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Color(0xFF4285F4),
+                        ),
                       ),
+                    )
+                  : const Icon(
+                      Icons.g_translate,
+                      color: Color(0xFF4285F4),
+                      size: 24,
                     ),
-                  )
-                : const Icon(
-                    Icons.g_translate,
-                    color: Color(0xFF4285F4),
-                    size: 24,
-                  ),
+            ),
           ),
-        ),
-
-        const SizedBox(width: 16),
+          const SizedBox(width: 16),
+        ],
 
         /// Phone Icon (to toggle phone login)
         GestureDetector(

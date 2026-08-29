@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import '../../config/app_colors.dart';
 import '../../config/app_text_styles.dart';
@@ -26,6 +27,9 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
   bool _isGoogleLoading = false;
   bool _acceptedTerms = false;
+
+  bool get _showGoogleSignIn =>
+      kIsWeb || defaultTargetPlatform != TargetPlatform.iOS;
 
   @override
   void dispose() {
@@ -241,35 +245,34 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                // ── OR Divider ────────────────────────────────────────
-                Row(
-                  children: [
-                    const Expanded(child: Divider()),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'OR',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
+                if (_showGoogleSignIn) ...[
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'OR',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ),
-                    ),
-                    const Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // ── Google Signup Button ──────────────────────────────
-                _SocialButton(
-                  text: 'Continue with Google',
-                  icon: Icons.g_mobiledata_rounded,
-                  backgroundColor: Colors.white,
-                  textColor: AppColors.textPrimary,
-                  borderColor: AppColors.border,
-                  onPressed: _handleGoogleSignup,
-                  isLoading: _isGoogleLoading,
-                ),
-                const SizedBox(height: 32),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _SocialButton(
+                    text: 'Continue with Google',
+                    icon: Icons.g_mobiledata_rounded,
+                    backgroundColor: Colors.white,
+                    textColor: AppColors.textPrimary,
+                    borderColor: AppColors.border,
+                    onPressed: _handleGoogleSignup,
+                    isLoading: _isGoogleLoading,
+                  ),
+                  const SizedBox(height: 32),
+                ],
 
                 // ── Login Link ────────────────────────────────────────
                 Row(

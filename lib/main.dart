@@ -40,9 +40,6 @@ Future<void> main() async {
   /// Register FCM background handler
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-  /// Initialize FCM
-  await FcmService.initialize();
-
   runApp(const MyApp());
 }
 
