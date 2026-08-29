@@ -24,18 +24,14 @@ android {
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
-    // ✅ Signing configuration
-    signingConfigs {
-
-        create("release") {
-
-            keyAlias = keystoreProperties["keyAlias"] as String
-
-            keyPassword = keystoreProperties["keyPassword"] as String
-
-            storeFile = file("ironcreze-key.jks")
-
-            storePassword = keystoreProperties["storePassword"] as String
+    if (keystorePropertiesFile.exists()) {
+        signingConfigs {
+            create("release") {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file("ironcreze-key.jks")
+                storePassword = keystoreProperties["storePassword"] as String
+            }
         }
     }
 
@@ -76,8 +72,9 @@ android {
         }
 
         release {
-
-            signingConfig = signingConfigs.getByName("release")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             isMinifyEnabled = false
 
