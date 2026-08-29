@@ -1,0 +1,150 @@
+{
+  "project_info": {
+    "project_number": "475070488494",
+    "project_id": "ironcreezeadmin",
+    "storage_bucket": "ironcreezeadmin.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475070488494:android:86986b03efa83f8f97f23f",
+        "android_client_info": {
+          "package_name": "com.example.iron_creeze_admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOpowWBLZl3iSjvXbgBDL7iOZuIs7vqW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "475070488494-borndkk9bev063pa53skeif2ojj2oj2o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ironCreezeAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475070488494:android:4f2e70400d6084df97f23f",
+        "android_client_info": {
+          "package_name": "com.example.ironcreeze_customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475070488494-7b4m6jo0dr7pl86dl8eap1ll65mpnup3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ironcreeze_customer",
+            "certificate_hash": "8b785bd23d499a135bc6a194a87df7509fbb5827"
+          }
+        },
+        {
+          "client_id": "475070488494-t9n2mnsu0s5ng6hlfkgdtfb0i2g1tcue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ironcreeze_customer",
+            "certificate_hash": "74f2d23c26138d2741c26294f399de889f3ee249"
+          }
+        },
+        {
+          "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOpowWBLZl3iSjvXbgBDL7iOZuIs7vqW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "475070488494-borndkk9bev063pa53skeif2ojj2oj2o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ironCreezeAdmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475070488494:android:b8d74451461e80e697f23f",
+        "android_client_info": {
+          "package_name": "com.ironcreze.vendor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475070488494-s6r719fspulat6vdsd6bj9nn1hjv2meo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ironcreze.vendor",
+            "certificate_hash": "8b785bd23d499a135bc6a194a87df7509fbb5827"
+          }
+        },
+        {
+          "client_id": "475070488494-sthmkd5a51sksv4fo2n2pt1rk8nupnrd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ironcreze.vendor",
+            "certificate_hash": "d4fcf624baaa7e6a46da1885a04efe38d0e5e253"
+          }
+        },
+        {
+          "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOpowWBLZl3iSjvXbgBDL7iOZuIs7vqW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475070488494-f99o3n08q54apdrv8c2ndub82pkimims.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "475070488494-borndkk9bev063pa53skeif2ojj2oj2o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ironCreezeAdmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

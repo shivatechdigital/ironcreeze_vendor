@@ -1,0 +1,23 @@
+Step 4: Update iOS Bundle Identifier
+Open Xcode:
+
+Bash
+
+cd ios
+open Runner.xcworkspace
+In Xcode:
+
+Click on Runner (left sidebar)
+Click on Runner under TARGETS
+Go to General tab
+Change Bundle Identifier to: com.ironcreze.vendor
+OR manually edit:
+
+📄 ios/Runner.xcodeproj/project.pbxproj
+
+Find and replace all occurrences:
+
+com.example.ironcrezeVendor → com.ironcreze.vendor
+
+
+./gradlew signingReport
