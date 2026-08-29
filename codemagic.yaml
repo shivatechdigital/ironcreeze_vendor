@@ -14,8 +14,6 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
-      groups:
-        - firebase_credentials
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.ironcreze.vendor
@@ -26,14 +24,14 @@ workflows:
         script: flutter pub get
       - name: Apply App Store signing profiles
         script: xcode-project use-profiles
-      - name: Build signed IPA
-        script: flutter build ipa --release
-      - name: Deploy Firebase Functions
+      - name: Prepare Flutter iOS build
         script: |
-          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$CM_BUILD_DIR/firebase-service-account.json"
-          export GOOGLE_APPLICATION_CREDENTIALS="$CM_BUILD_DIR/firebase-service-account.json"
-          npm ci --prefix functions
-          npx firebase-tools@latest deploy --project ironcreezeadmin --only functions:sendCustomerNotification,functions:deleteAccount
+          flutter build ios --release --no-codesign
+      - name: Export signed IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$CM_BUILD_DIR/ios/Runner.xcworkspace" \
+            --scheme "Runner"
     artifacts:
       - build/ios/ipa/*.ipa
       - build/ios/archive/Runner.xcarchive
