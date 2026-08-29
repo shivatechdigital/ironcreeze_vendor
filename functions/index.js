@@ -188,9 +188,13 @@ exports.sendCustomerNotification = onDocumentCreated("notifications/{notificatio
                     channelId: "ironcreeze_orders",
                     sound: "default",
                     clickAction: "FLUTTER_NOTIFICATION_CLICK",
+                    tag: "ironcreeze_latest_customer_update",
                 },
             },
             apns: {
+                headers: {
+                    "apns-collapse-id": "ironcreeze-latest-customer-update",
+                },
                 payload: {
                     aps: {
                         sound: "default",

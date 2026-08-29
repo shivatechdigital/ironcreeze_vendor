@@ -170,6 +170,8 @@ class LocalNotificationService {
       interruptionLevel: InterruptionLevel.timeSensitive,
     );
 
+    await _notificationsPlugin.cancelAll();
+
     await _notificationsPlugin.show(
       notificationId,
       '🛒 New Order Received!',
@@ -198,8 +200,10 @@ class LocalNotificationService {
           autoCancel: true,
         );
 
+    await _notificationsPlugin.cancelAll();
+
     await _notificationsPlugin.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      0,
       title,
       body,
       const NotificationDetails(android: androidDetails),
