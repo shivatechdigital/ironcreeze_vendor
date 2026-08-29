@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '475070488494',
     projectId: 'ironcreezeadmin',
     storageBucket: 'ironcreezeadmin.firebasestorage.app',
-    iosBundleId: 'com.example.ironcrezeVendor',
+    iosBundleId: 'com.ironcreze.vendor',
   );
 }
