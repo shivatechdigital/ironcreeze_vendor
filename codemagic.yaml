@@ -1,0 +1,42 @@
+workflows:
+  vendor-ios-app-store:
+    name: Vendor iOS App Store Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+      cancel_previous_builds: true
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      groups:
+        - firebase_credentials
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.example.ironcrezeVendor
+    scripts:
+      - name: Clean Flutter build files
+        script: flutter clean
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Apply App Store signing profiles
+        script: xcode-project use-profiles
+      - name: Build signed IPA
+        script: flutter build ipa --release
+      - name: Deploy Firebase Functions
+        script: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$CM_BUILD_DIR/firebase-service-account.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$CM_BUILD_DIR/firebase-service-account.json"
+          npm ci --prefix functions
+          npx firebase-tools@latest deploy --project ironcreezeadmin --only functions:sendCustomerNotification,functions:deleteAccount
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/Runner.xcarchive
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
