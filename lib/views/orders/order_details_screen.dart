@@ -167,6 +167,57 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     }
   }
 
+  Future<void> _completeDelivery() async {
+    final dropCode = await _showCodeInputDialog(
+      'Enter Drop Code',
+      'Ask customer for their 4-digit delivery code',
+    );
+    if (dropCode == null || !mounted) return;
+
+    final orderProvider = Provider.of<OrderProvider>(context, listen: false);
+
+    if (!_order.isPaymentReceived) {
+      final paymentReceived = await ConfirmationDialog.show(
+        context: context,
+        title: 'Confirm Payment',
+        message: 'Has the payment been received from the customer?',
+        confirmText: 'Payment Received',
+        cancelText: 'Cancel',
+        icon: Icons.payments_outlined,
+      );
+      if (paymentReceived != true || !mounted) return;
+
+      setState(() => _isLoading = true);
+      final paymentUpdated = await orderProvider.markPaymentReceived(
+        _order.orderId,
+        true,
+      );
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (!paymentUpdated) {
+        Helpers.showErrorToast(
+          orderProvider.error ?? 'Failed to confirm payment',
+        );
+        return;
+      }
+    }
+
+    setState(() => _isLoading = true);
+    final completed = await orderProvider.markAsCompleted(
+      _order.orderId,
+      dropCode,
+    );
+    if (!mounted) return;
+    setState(() => _isLoading = false);
+
+    if (completed) {
+      Helpers.showSuccessToast('Delivery completed!');
+    } else {
+      Helpers.showErrorToast(orderProvider.error ?? 'Invalid drop code!');
+    }
+  }
+
   Future<String?> _showCodeInputDialog(String title, String subtitle) async {
     final controller = TextEditingController();
 
@@ -621,6 +672,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           label: 'Pickup Date',
           value: DateFormatter.toFullDate(_order.pickupDate),
         ),
+        if (_order.pickupTime != null && _order.pickupTime!.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _buildScheduleRow(
+            icon: Icons.access_time_outlined,
+            label: 'Pickup Time',
+            value: _order.pickupTime!,
+          ),
+        ],
         if (_order.deliveryDate != null) ...[
           const SizedBox(height: 12),
           _buildScheduleRow(
@@ -841,8 +900,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         nextStatus = OrderStatus.delivery;
         break;
 
-      // ✅ koi button nahi
       case OrderStatus.delivery:
+        buttonText = 'Verify Drop Code & Complete';
+        break;
       case OrderStatus.completed:
         return null;
 
@@ -865,7 +925,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       child: SafeArea(
         child: CustomButton(
           text: buttonText,
-          onPressed: () => _handleStatusUpdate(nextStatus!),
+          onPressed: () {
+            if (_order.status == OrderStatus.delivery) {
+              _completeDelivery();
+            } else {
+              _handleStatusUpdate(nextStatus!);
+            }
+          },
           isLoading: _isLoading,
         ),
       ),

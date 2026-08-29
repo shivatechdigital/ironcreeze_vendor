@@ -145,6 +145,7 @@ class OrderModel {
   final double platformFee;
   final double total;
   final DateTime pickupDate;
+  final String? pickupTime;
   final DateTime? deliveryDate;
   final String pickupCode;
   final String dropCode;
@@ -178,6 +179,7 @@ class OrderModel {
     required this.platformFee,
     required this.total,
     required this.pickupDate,
+    this.pickupTime,
     this.deliveryDate,
     required this.pickupCode,
     required this.dropCode,
@@ -219,6 +221,7 @@ class OrderModel {
       total: (data['total'] ?? 0).toDouble(),
       pickupDate:
           (data['pickupDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+        pickupTime: data['pickupTime'] as String?,
       deliveryDate: (data['deliveryDate'] as Timestamp?)?.toDate(),
       pickupCode: data['pickupCode'] ?? '',
       dropCode: data['dropCode'] ?? '',
@@ -315,6 +318,7 @@ class OrderModel {
       platformFee: platformFee ?? this.platformFee, // ✅ added
       total: total ?? this.total, // ✅ added
       pickupDate: pickupDate,
+      pickupTime: pickupTime,
       deliveryDate: deliveryDate,
       pickupCode: pickupCode,
       dropCode: dropCode,
